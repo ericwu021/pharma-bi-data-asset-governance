@@ -24,3 +24,6 @@ logs/
 
 # Local pipeline runtime config (contains environment-specific paths)
 config/data_matching_pipeline.config.json
+
+# Keep local raw archive out of remote
+Original/
