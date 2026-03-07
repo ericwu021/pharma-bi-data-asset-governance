@@ -1,0 +1,26 @@
+# Python caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+.venv/
+venv/
+
+# Notebook checkpoints
+.ipynb_checkpoints/
+
+# OS artifacts
+.DS_Store
+
+# Local outputs and sensitive runtime artifacts
+out/
+tmp/
+logs/
+*.log
+*.token
+*token*.txt
+
+# Local pipeline runtime config (contains environment-specific paths)
+config/data_matching_pipeline.config.json

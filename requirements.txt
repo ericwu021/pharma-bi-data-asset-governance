@@ -1,0 +1,9 @@
+requests
+pandas
+openpyxl
+selenium
+opencv-python
+numpy
+rapidfuzz
+tqdm
+prophet

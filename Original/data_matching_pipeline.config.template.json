@@ -1,0 +1,56 @@
+{
+  "year": "2026",
+  "sub_folder": "Q1",
+  "export_tag": "202602",
+  "days_count": 30,
+  "start_date": "2026-02-01",
+  "date_low_limit": "2026-02-01",
+  "date_high_limit": "2026-02-29",
+  "raw_data_root": "./data/raw",
+  "output_root": "./data/output",
+  "mapping_root": "./mapping",
+  "customers": [
+    {
+      "name": "竹林",
+      "ka_name": "竹林",
+      "loader": "single",
+      "source": "竹林.xlsx",
+      "target_columns": ["销售日期", "KA", "分部", "门店", "商品编码", "数量"],
+      "date_mode": 0,
+      "sheet_name": "",
+      "skip_rows": 0,
+      "output_suffix": "",
+      "expand_by_day": false,
+      "preprocess_steps": [],
+      "postprocess_steps": []
+    },
+    {
+      "name": "一心堂",
+      "ka_name": "一心堂",
+      "loader": "folder",
+      "source": "一心堂",
+      "target_columns": ["销售日期", "KA", "分部", "门店", "商品编码", "数量"],
+      "date_mode": 0,
+      "sheet_name": "",
+      "skip_rows": 0,
+      "output_suffix": "",
+      "expand_by_day": false,
+      "preprocess_steps": [],
+      "postprocess_steps": []
+    },
+    {
+      "name": "天济",
+      "ka_name": "天济",
+      "loader": "folder_tianji",
+      "source": "天济",
+      "target_columns": ["销售日期", "KA", "分部", "门店", "商品编码", "数量"],
+      "date_mode": 0,
+      "sheet_name": "",
+      "skip_rows": 0,
+      "output_suffix": "",
+      "expand_by_day": false,
+      "preprocess_steps": [],
+      "postprocess_steps": []
+    }
+  ]
+}
