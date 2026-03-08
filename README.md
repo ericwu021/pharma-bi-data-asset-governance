@@ -1,4 +1,4 @@
-# Multi-Source Heterogeneous Data Asset Governance
+# Multi-Source Heterogeneous Data Asset Governance (Chapter 4)
 
 This repository contains the implementation assets aligned with **Chapter 4** of the doctoral thesis on multi-source heterogeneous data asset governance.  
 It organizes the codebase by governance mechanism rather than by script chronology, so the repository can support both academic review and engineering reuse.
