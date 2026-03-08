@@ -115,4 +115,4 @@ For chapter-level narrative-to-code traceability, see `03_documentation/chapter4
 
 ## License
 
-MIT License.
+Apache License 2.0 (`Apache-2.0`). See `LICENSE` for details.
