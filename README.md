@@ -21,6 +21,8 @@ The implementation is organized into three layers:
 
 ```text
 .
+├── 03_documentation/
+│   └── chapter4_mapping.md
 ├── config/
 │   └── data_matching_pipeline.config.template.json
 ├── docs/
@@ -41,8 +43,6 @@ The implementation is organized into three layers:
 │   │   └── data_matching_pipeline.py
 │   └── runtime/
 │       └── common_runtime.py
-├── Original/
-│   └── (raw source archive)
 ├── requirements.txt
 └── README.md
 ```
@@ -104,6 +104,7 @@ python src/processing/data_matching_pipeline.py --config-file "./config/data_mat
 ```
 
 For full execution order and reproducibility notes, see `docs/RUNBOOK.md`.
+For chapter-level narrative-to-code traceability, see `03_documentation/chapter4_mapping.md`.
 
 ## Reproducibility and Governance Notes
 
