@@ -1,4 +1,4 @@
-"""Shared runtime utilities for chapter-5 automation scripts."""
+"""Shared runtime utilities for the Chapter 4 collection and processing scripts."""
 
 from __future__ import annotations
 
