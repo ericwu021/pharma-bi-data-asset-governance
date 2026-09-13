@@ -1,4 +1,4 @@
-"""Chapter-5 standardization/mapping pipeline.
+"""Chapter 4 standardization and mapping pipeline.
 
 核心目标：
 1) 读取多客户异构原始数据（单文件/目录批量）；
@@ -371,7 +371,7 @@ def run_pipeline(config: PipelineConfig) -> None:
 
 def parse_args() -> argparse.Namespace:
     """Parse CLI args."""
-    parser = argparse.ArgumentParser(description="Run chapter-5 data matching pipeline (.py version).")
+    parser = argparse.ArgumentParser(description="Run the Chapter 4 data matching pipeline (.py version).")
     parser.add_argument("--config-file", required=True, help="Path to JSON config file.")
     return parser.parse_args()
 

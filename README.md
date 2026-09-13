@@ -49,20 +49,17 @@ The implementation is organized into three layers:
 
 ## Module-to-Method Mapping (Chapter 4)
 
-- `src/collection/session_auth_multiendpoint_collection.py`  
-  Session-reuse multi-endpoint collection (low-interaction branch of Algorithm 1).
+| Thesis mechanism | Section | Asset | File |
+|---|---|---|---|
+| Session reuse with on-write quality gate | 4.4.1 | A1 | `src/collection/session_auth_multiendpoint_collection.py` |
+| Authentication / transfer decoupling | 4.4.2, Algorithm 4-1 | A2 | `src/collection/interactive_auth_decoupled_collection.py` |
+| Token acquisition and token-driven daily batch | 4.4.3, Algorithm 4-2 | A3 | `src/collection/token_auth_acquisition.py`, `src/collection/token_based_daily_collection.py` |
+| Config-driven standardization, day-level expansion, master-data mapping | 4.5, Algorithm 4-3 | A4 | `src/processing/data_matching_pipeline.py`, `config/data_matching_pipeline.config.template.json` |
+| Approximate SKU matching and backfill | 4.5.3 | A5 | `notebooks/sku_approximate_mapping.ipynb` |
+| Master-data enrichment and category alignment | 4.5.3 | A6 | `notebooks/global_category_mapping_*.ipynb` |
+| Shared gate primitives (non-empty check, previous-day cleanup, logging, proxy) | 4.6, 4.7 | shared | `src/runtime/common_runtime.py` |
 
-- `src/collection/interactive_auth_decoupled_collection.py`  
-  Interactive authentication and transmission decoupling (high-interaction branch of Algorithm 1).
-
-- `src/collection/token_auth_acquisition.py` + `src/collection/token_based_daily_collection.py`  
-  Two-stage token-driven scheduling and daily extraction (Algorithm 2).
-
-- `src/processing/data_matching_pipeline.py`  
-  Configuration-driven normalization, mapping, and cross-source integration (Algorithm 3 core workflow).
-
-- `notebooks/*.ipynb`  
-  Experimental and application-level artifacts for SKU/category mapping and forecasting.
+The statement-by-statement mapping between thesis text and code locations is in `03_documentation/chapter4_mapping.md`.
 
 ## Quick Start
 

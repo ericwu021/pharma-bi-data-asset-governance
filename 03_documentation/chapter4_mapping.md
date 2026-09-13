@@ -1,97 +1,41 @@
-# Chapter 4 Code Mapping
+# 第 4 章《数据平台建设与多源资产治理》与代码的对应
 
-This document maps Chapter 4 narrative blocks to concrete implementation artifacts in this repository.
+本文档把论文第 4 章的机制、算法与表格逐项对应到本仓库的实现文件，供评审复核与复现。章节编号以论文 2026 年 9 月版为准。
 
-## 1) Mechanism Group A: Heterogeneous Authentication and Collection
+## 1. 机制与文件
 
-**Chapter intent**
-- Stabilize data availability under heterogeneous authentication constraints.
-- Decouple authentication complexity from reusable extraction workflows.
+| 论文机制 | 章节 | 资产编号 | 实现文件 |
+|---|---|---|---|
+| 会话复用与落盘门控 | 4.4.1 | A1 | `src/collection/session_auth_multiendpoint_collection.py` |
+| 认证与传输解耦 | 4.4.2，算法 4-1 | A2 | `src/collection/interactive_auth_decoupled_collection.py` |
+| 令牌资产化与日批调度 | 4.4.3，算法 4-2 | A3 | `src/collection/token_auth_acquisition.py`、`src/collection/token_based_daily_collection.py` |
+| 配置驱动的标准化算子、时间粒度一致化、主数据映射 | 4.5，算法 4-3 | A4 | `src/processing/data_matching_pipeline.py`、`config/data_matching_pipeline.config.template.json`、`notebooks/data_matching_pipeline.ipynb` |
+| 增量近似匹配与回填 | 4.5.3 | A5 | `notebooks/sku_approximate_mapping.ipynb` |
+| 主数据富化与类别对齐 | 4.5.3 | A6 | `notebooks/global_category_mapping_panel_data.ipynb`、`notebooks/global_category_mapping_ecommerce_data.ipynb` |
+| 门控原语（非空校验、前日清理、目录保障、日志、代理） | 4.6、4.7 | 共用 | `src/runtime/common_runtime.py` |
 
-**Primary artifacts**
-- `src/collection/`
-- `src/runtime/common_runtime.py`
+## 2. 论文中的参数与代码位置
 
-**Representative implementation evidence**
-- Session-reuse branch (Algorithm 1, low-interaction):
-  - `src/collection/session_auth_multiendpoint_collection.py`
-- Interactive-auth decoupled branch (Algorithm 1, high-interaction):
-  - `src/collection/interactive_auth_decoupled_collection.py`
-- Token-driven branch (Algorithm 2):
-  - `src/collection/token_auth_acquisition.py`
-  - `src/collection/token_based_daily_collection.py`
-- Runtime support for logging/proxy/file gating:
-  - `src/runtime/common_runtime.py`
+| 论文陈述 | 代码位置 |
+|---|---|
+| 登录请求 30 秒超时，下载请求 120 秒超时 | `session_auth_multiendpoint_collection.py`：`login()`、`download_endpoint()` |
+| 四个报表端点共用一个会话 | `session_auth_multiendpoint_collection.py`：`ENDPOINTS`、`main()` |
+| 落盘后非空校验，失败即删除并告警；通过后重写为统一格式；清理前一日同名文件 | `download_endpoint()` 调用 `validate_excel_nonempty()`、`remove_yesterday_files()` |
+| 验证码图像经亮度阈值过滤与前景保留后估计滑块位移；认证后提取全部 Cookie | `interactive_auth_decoupled_collection.py`：`keep_brightest_areas()`、`remove_white_text_keep_graphics()`、`calculate_highlight_right_edge_distance()`、`collect_cookie_key()` |
+| 20 秒内从跳转地址捕获令牌并持久化 | `token_auth_acquisition.py`：`get_token()`（`--timeout-seconds` 默认 20） |
+| 进货、销售、纯销三类日报；空文件删除；前日清理 | `token_based_daily_collection.py`：`run_daily_batch()`、`download_and_gate()` |
+| 作业项字段：数据源、加载方式、目标字段、日期模式、工作表、表头偏移、前后处理步骤 | `data_matching_pipeline.py`：`CustomerJob` |
+| 表 4-1 的转换步骤类型 | `apply_transform_steps()`：`rename_columns`、`filter_equal`、`filter_not_equal`、`set_constant`、`map_values`、`split_take_first`、`slice_str`、`assign_by_contains`、`merge_mapping` |
+| 周期数据按天均匀展开 | `date_expansion_by_day()` |
+| 分部、城市、SKU、价格四步映射，每步记录未命中数量 | `format_standardization()`、`load_mapping_tables()` |
+| 客户明细与全量集成结果输出 | `run_pipeline()` |
 
-## 2) Mechanism Group B: Standardization, Mapping, and Integration
+## 3. 评估指标的数据来源
 
-**Chapter intent**
-- Resolve schema and semantic comparability gaps across source systems.
-- Construct parameterized and reproducible transformation workflows.
+- 文件有效率 $r_f$：采集脚本日志中的下载数与非空校验通过数。
+- 映射覆盖率 $Cov_{sku}$：`format_standardization()` 记录的分部、城市、SKU 未命中数量。
+- 治理前后对照（表 4-5）：来自平台运行记录，不由本仓库生成。
 
-**Primary artifact**
-- `src/processing/data_matching_pipeline.py`
+## 4. 版本冻结
 
-**Representative implementation evidence**
-- Config-driven pipeline entrypoint:
-  - `src/processing/data_matching_pipeline.py`
-  - `config/data_matching_pipeline.config.template.json`
-- Customer-specific preprocess/postprocess transformation chain:
-  - `rename_columns`, `filter_equal`, `filter_not_equal`
-  - `set_constant`, `map_values`, `split_take_first`
-  - `slice_str`, `assign_by_contains`, `merge_mapping`
-- Integrated export and date-range support:
-  - cross-customer merged output and date-range export logic in `src/processing/data_matching_pipeline.py`
-
-## 3) Mechanism Group C: Mapping Knowledge Enrichment and Application Readiness
-
-**Chapter intent**
-- Build iterative mapping knowledge assets for long-term governance.
-- Support downstream analytics and business modeling with governed outputs.
-
-**Primary artifacts**
-- `notebooks/`
-
-**Representative implementation evidence**
-- SKU approximate mapping experiments:
-  - `notebooks/sku_approximate_mapping.ipynb`
-- Global category mapping for panel/e-commerce streams:
-  - `notebooks/global_category_mapping_panel_data.ipynb`
-  - `notebooks/global_category_mapping_ecommerce_data.ipynb`
-- Application-layer forecasting example:
-  - `notebooks/brand_forecast_modeling.ipynb`
-
-## 4) Mechanism-Level Traceability
-
-### M1 Availability Stabilization
-- Multi-branch authentication and extraction strategies:
-  - `src/collection/session_auth_multiendpoint_collection.py`
-  - `src/collection/interactive_auth_decoupled_collection.py`
-  - `src/collection/token_auth_acquisition.py`
-  - `src/collection/token_based_daily_collection.py`
-
-### M2 Standardization Consistency
-- Parameterized normalization and transformation control:
-  - `src/processing/data_matching_pipeline.py`
-  - `config/data_matching_pipeline.config.template.json`
-
-### M3 Mapping Feedback Loop
-- Mapping enrichment and unresolved-entity handling workflows:
-  - `src/processing/data_matching_pipeline.py`
-  - `notebooks/sku_approximate_mapping.ipynb`
-  - `notebooks/global_category_mapping_*.ipynb`
-
-### M4 Governance Reproducibility
-- Runbook and execution order documentation:
-  - `docs/RUNBOOK.md`
-  - `README.md`
-
-## 5) Engineering and Governance Discussion Support
-
-The repository layout supports Chapter 4 discussions on:
-- authentication strategy branching under heterogeneous data interfaces,
-- configurable governance operators for cross-source comparability,
-- traceable integration outputs for asset-grade data delivery,
-- progressive knowledge accumulation via mapping and notebook evidence.
-
-This mapping is suitable for chapter figures, evidence tables, and GitHub-based reproducibility appendices.
+论文送审前以标签 `v1.0-paper` 冻结本仓库，标签对应的提交哈希登记在论文附录。
